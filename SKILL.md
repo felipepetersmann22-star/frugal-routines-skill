@@ -1,36 +1,29 @@
 ---
 name: frugal-routines
-description: Use when creating, reviewing or merging scheduled jobs, digests, monitors, reminders or watches, or when asked to make them cheaper. Defaults to weekday waking hours and flexible start times, prefers event triggers to polling, merges overlapping jobs, and stays quiet when nothing changed.
+description: Design or review scheduled jobs, reminders, monitors and digests for useful timing and efficient execution. Use when a user asks to create, consolidate or improve recurring work, including its delivery and coverage.
 license: MIT
 ---
 
 # Frugal routines
 
-A scheduled job costs usage every time it wakes, whether or not it finds anything. Design it around when someone will act on the result, not around how often the source changes. If your platform has its own guidance for creating routines, follow it for the mechanics; this skill adds the cost checks.
+Match execution and delivery to the real decision, deadline and acceptable delay. Preserve the user's instructions, urgency and platform conventions. Reducing runs is useful only when the result still arrives in time and covers what matters.
 
-## Before adding a job
-1. **Does it need to exist?** Could it be one more step in a job that already runs?
-2. **Is there an event for it?** If the thing you're waiting for (a new email, a pull request, a mention, a form submission) can trigger the job directly, use the trigger. Timers that check "anything new?" are polling.
-3. **When will the result be used?** Schedule just before that.
+## Understand the job
 
-## Defaults
-- **Weekdays and waking hours.** Pin both the days and the hours. Leaving either open quietly adds nights or weekends. Use the owner's real hours when known.
-- **Go outside that window only for a stated reason**: the owner asked for it, the subject is time-critical (an incident, or a cut-off that falls outside working hours), the event only happens then, or the job is about personal life (health, pets, habits) where every day matters.
-- **Coarsest cadence that still lets someone act in time.** Start slow; tighten only when the delay had a real cost.
-- **Flexible start windows.** Let the job start within a window around the hour instead of on the exact minute, unless the minute matters (a meeting start, a one-off reminder). If it must be ready by a time, start early enough and don't allow late starts.
-- **Read only what's new since the last run**: a date, an ID or a cursor, not the whole inbox or feed each time.
+Identify the outcome, source, trigger, recipient and destination, time zone, active days, deadline, acceptable latency, expiry or standing nature, and notification preferences. Inspect existing related routines and the actual scheduler before proposing another one. If a decision-critical detail is missing, leave it unresolved or ask; do not invent hours, time zone or quiet periods. An urgent incident may need immediate delivery on weekends.
 
-## Stay quiet
-- If nothing changed, send nothing. No "no change" messages.
-- Alert at once only on what the owner would act on (a price under target, a refund request, an outage). Everything else waits for a digest.
-- Give watches an end: a date, a target, or a number of runs. A watch with no end runs forever.
+Separate a one-time watch through a specific event from a standing recurring alert. Use the platform's supported tools for scheduling and notification. A request to review does not itself authorize changing or disabling existing routines; apply changes when the user's request or other existing authorization covers them.
 
-## Merging duplicates
-When two jobs read the same sources or serve the same reader at similar times, merge them into one run with sections. Keep them separate only if they go to different people or need different timing for a reason you can state.
+## Choose a reliable design
 
-## Reviewing existing jobs
-List each job with: trigger or schedule, days and hours, what it reads, who reads the result and when, what it sends when nothing changed. Then propose changes in this order: remove or merge jobs, switch timers to triggers, narrow days and hours, cut what each run reads, stop empty messages.
+1. **Reuse carefully.** An existing routine is a candidate only if audience, source permissions, time zone, delivery channel, urgency and deadline fit. Keep independent failure handling where a combined failure would hide important work.
+2. **Choose trigger and cadence.** Prefer a supported, reliable event trigger when it meets the deadline. Otherwise choose a polling interval that meets the acceptable delay; explain its trade-off. Confirm scheduler support rather than assuming events or flexible windows exist. Use a window only when its latest possible start still meets the deadline.
+3. **Read incrementally.** Where the source supports it, persist a cursor or timestamp, deduplicate results, and define a bounded first run. On a missing or invalid cursor, use an appropriate safe lookback or request a decision; identify gaps and do not present partial coverage as complete. Advance a cursor only after the work it represents has been handled successfully.
+4. **Deliver according to the request.** Honor immediate alerts, regular digests, no-change notifications and quiet hours as specified. An open-ended watch can be appropriate; set an expiry only when it serves the user's goal. Define retries or a failure signal when missed runs matter.
+5. **Propose in concrete terms.** Record the current and proposed trigger, schedule with time zone, expected delay, destination, coverage, dependencies and what could be lost. Make only authorized changes. Verify the resulting configuration and report anything that could not be verified.
 
-State the change in the job's own terms ("every 15 minutes, all week" becomes "twice a day on weekdays, message only below target"). Don't estimate the usage saving as a number.
+## Example
 
-Never edit someone's existing jobs without their yes. Propose, then change what they approve.
+A user wants a weekend outage alert within five minutes. Check whether a reliable outage event can notify the chosen destination. If it cannot, propose a supported interval that meets five minutes, including an appropriate failure signal. Do not replace it with a weekday digest merely to reduce runs. A separate non-urgent summary may have a different cadence if requested.
+
+Describe measurable changes in calls or schedules only when supported by real configuration. Do not claim token or cost savings without a suitable measurement.
